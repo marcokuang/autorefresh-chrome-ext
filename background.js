@@ -19,22 +19,25 @@ chrome.runtime.onInstalled.addListener(function () {
   });
 });
 
-let timeInterval = {
-  timeInterval: null,
-  getTimeInterval: function () {
-    if (this.timeInterval !== null) {
-      return this.timeInterval;
-    }
-  },
+// using singleton pattern
+let timeInterval = (function () {
+  let timeInterval = null;
+  return {
+    getTimeInterval: function () {
+      if (timeInterval !== null) {
+        return timeInterval;
+      }
+    },
 
-  setTimeInterval: function (newInterval) {
-    this.timeInterval = newInterval;
-  },
+    setTimeInterval: function (newInterval) {
+      timeInterval = newInterval;
+    },
 
-  clearInterval: function () {
-    clearInterval(this.timeInterval);
-  },
-};
+    clearInterval: function () {
+      clearInterval(timeInterval);
+    },
+  };
+})();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log(request.cmd, request.tabId);
