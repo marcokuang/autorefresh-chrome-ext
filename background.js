@@ -33,6 +33,7 @@ let timeInterval = (function () {
       if (timeInterval !== null) {
         this.clearInterval();
       }
+
       timeInterval = newInterval;
     },
 
