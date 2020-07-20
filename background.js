@@ -20,7 +20,7 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 // using singleton pattern
-let timeInterval = (function () {
+let TimeInterval = (function () {
   let timeInterval = null;
   return {
     getTimeInterval: function () {
@@ -47,14 +47,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log(request.cmd, request.tabId);
 
   if (request.cmd === "cancel") {
-    timeInterval.clearInterval();
+    sendResponse({ message: "clearing the interval id..." });
+    TimeInterval.clearInterval();
   } else {
-    timeInterval.setTimeInterval(
-      setInterval(() => {
-        console.log("calling reload");
-        sendResponse({ message: "calling reload" });
-        chrome.tabs.reload(request.tabId);
-      }, request.cmd * 1000)
-    );
+    sendResponse({ message: "Registering reload id" });
+    let intervalId = setInterval(() => {
+      // handle runtime.lastError
+      chrome.tabs.get(request.tabId, () => {
+        if (!chrome.runtime.lastError) {
+          chrome.tabs.reload(request.tabId);
+        } else {
+          console.log(
+            "trying to recover from message: ",
+            chrome.runtime.lastError.message,
+            " interval ID: ",
+            TimeInterval.getTimeInterval()
+          );
+          TimeInterval.clearInterval();
+        }
+      });
+    }, request.cmd * 1000);
+    TimeInterval.setTimeInterval(intervalId);
   }
 });

@@ -15,7 +15,9 @@ for (let btn of buttons) {
     let data = element.target.getAttribute("data");
 
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.runtime.sendMessage({ cmd: data, tabId: tabs[0].id });
+      chrome.runtime.sendMessage({ cmd: data, tabId: tabs[0].id }, (res) => {
+        console.log(res.message);
+      });
     });
   };
 }
