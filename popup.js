@@ -10,22 +10,12 @@ chrome.runtime.onConnect.addListener((port) => {
   console.log("connected ", port);
 });
 
-function send(data, tabs) {
-  let tabArr = tabs;
-  chrome.runtime.sendMessage({ cmd: data, tabId: tabArr[0].id }, (res) => {
-    console.log("send msg success", res);
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError.messasge);
-    }
-  });
-}
-
 for (let btn of buttons) {
   btn.onclick = function (element) {
     let data = element.target.getAttribute("data");
 
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      send(data, tabs);
+      chrome.runtime.sendMessage({ cmd: data, tabId: tabs[0].id });
     });
   };
 }

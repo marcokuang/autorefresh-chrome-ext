@@ -52,6 +52,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     timeInterval.setTimeInterval(
       setInterval(() => {
         console.log("calling reload");
+        sendResponse({ message: "calling reload" });
         chrome.tabs.reload(request.tabId);
       }, request.cmd * 1000)
     );
